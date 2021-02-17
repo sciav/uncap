@@ -43,7 +43,8 @@ ui <- fluidPage(
                          verbatimTextOutput("election_results"),
                          DT::dataTableOutput("er"),
                          "Election data from:",
-                         HTML("<a href = https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/42MVDX>dataverse.harvard.edu</a>")),
+                         HTML("<a href = https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/42MVDX>dataverse.harvard.edu</a>")
+                         ),
                 tabPanel("Election Simulator",
                          uiOutput("chooser"),
                          verbatimTextOutput("custom_election")
@@ -73,7 +74,20 @@ server <- function(input, output, session) {
         checkboxGroupInput("new_states", label = "New States", choices = ch)
     })
     output[["apportionment"]] <- DT::renderDataTable({
-        DT::datatable(app(), options = list(pageLength = nrow(app()))) %>%
+        DT::datatable(app(),
+                      extensions = c("FixedHeader", "Buttons"),
+                      rownames = FALSE,
+                      options = list(
+                          pageLength = nrow(app()),
+                          paging = TRUE,
+                          searching = TRUE,
+                          fixedColumns = TRUE,
+                          fixedHeader = TRUE,
+                          autoWidth = TRUE,
+                          ordering = TRUE,
+                          dom = 'Bfrtip',
+                          buttons = c('copy', 'csv', 'print')
+                      )) %>%
             formatPercentage(c("Population %", "Seat %", "Electoral Vote %", "Rep Factor", "EV Factor"), digits = 2) %>%
             formatRound("Population", mark = ",", digits = 0)
     })
