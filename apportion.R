@@ -13,7 +13,6 @@ state_list <- c("Alabama", "Alaska", "Arizona", "Arkansas", "California",
 apportion <- function(states,
                       nseats = 435,
                       new_states = NULL) {
-
   seat_cap <- max(nseats * (ceiling(states[["Pop"]] / sum(states[["Pop"]], na.rm = TRUE) * 100) + 5), na.rm = TRUE) %/% 100
   n <- seq_len(seat_cap)
   mult <- 1 / sqrt(n * (n - 1))
@@ -22,12 +21,6 @@ apportion <- function(states,
   st_dat <- states[["State"]]
   non_states <- setdiff(st_dat, c(state_list, new_states))
   priority[non_states, ] <- 0
-  # if ((!"District of Columbia" %in% new_states) && "District of Columbia" %in% rownames(priority)) {
-  #   priority["District of Columbia", seq_len(ncol(priority))] <- 0
-  # }
-  # if ((!"Puerto Rico" %in% new_states) && "Puerto Rico" %in% rownames(priority)) {
-  #   priority["Puerto Rico", seq_len(ncol(priority))] <- 0
-  # }
   ap <- order(priority, decreasing = TRUE)[seq_len(nseats)]
   seats <- table(rep(states[["State"]], length.out = max(ap, na.rm = TRUE))[ap],
                  dnn = "State")
